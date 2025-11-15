@@ -1,7 +1,9 @@
 
 const express = require('express');
 const http = require("http");
+const path = require('path');
 const userRoutes = require('./routes/userRoutes.js');
+const postRoutes = require('./routes/postRoutes.js');
 const { Server } = require("socket.io");
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -16,6 +18,8 @@ app.use(express.json());
 
 
 app.use('/api/users', userRoutes);
+app.use('/api/posts', postRoutes);
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // Khởi tạo server HTTP + Socket
 const server = http.createServer(app);
@@ -38,4 +42,4 @@ io.on("connection", (socket) => {
 });
 
 const PORT = process.env.PORT || 4000;
-server.listen(PORT, () => console.log(`✅ Server chạy tại http://localhost:${PORT}`));
+server.listen(PORT, () => console.log(`Server chạy tại http://localhost:${PORT}`));
