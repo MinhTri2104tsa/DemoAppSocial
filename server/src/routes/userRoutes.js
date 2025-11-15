@@ -1,0 +1,16 @@
+const express = require('express');
+const router = express.Router();
+const { registerUser, loginUser, getProfile, updateProfile } = require('../controllers/userController.js');
+const { verifyToken } = require('../middleware/authMiddleware.js');
+const upload = require('../middleware/upload.js');
+
+// User Registration
+router.post('/register', registerUser);
+// User Login
+router.post('/login', loginUser);
+// Get User Profile
+router.get('/me', verifyToken, getProfile);
+// Update User Profile
+router.put('/me', verifyToken, upload.single('avatar'), updateProfile);
+
+module.exports = router;
