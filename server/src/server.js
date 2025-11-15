@@ -5,6 +5,7 @@ const path = require('path');
 const userRoutes = require('./routes/userRoutes.js');
 const postRoutes = require('./routes/postRoutes.js');
 const likeRoutes = require('./routes/likeRoutes.js');
+const commentRoutes = require('./routes/commentRoutes.js');
 const { Server } = require("socket.io");
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -23,6 +24,8 @@ app.use('/api/posts', postRoutes);
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 //like routes
 app.use("/api/likes", likeRoutes);
+//comment routes
+app.use("/api/comments", commentRoutes);
 
 // Khởi tạo server HTTP + Socket
 const server = http.createServer(app);
