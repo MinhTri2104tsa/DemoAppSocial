@@ -35,7 +35,7 @@ function Navbar() {
         </Link>
         <Link
           to="/register"
-          className="px-4 py-2 bg-instagram-primary text-white rounded-lg font-semibold hover:bg-blue-600 transition-all"
+          className="text-instagram-primary font-semibold hover:text-blue-600 transition-all"
         >
           Đăng ký
         </Link>

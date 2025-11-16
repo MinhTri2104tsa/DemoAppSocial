@@ -95,9 +95,6 @@ export default function Profile() {
                   {user?.username || "User"}
                 </h1>
                 <div className="flex items-center gap-3">
-                  <button className="px-4 py-2 bg-instagram-primary text-white rounded-lg font-semibold hover:bg-blue-600 transition-all">
-                    Follow
-                  </button>
                   <button onClick={handleEditToggle} className="px-4 py-2 border rounded-lg font-semibold">
                     {isEditing ? 'Cancel' : 'Edit Profile'}
                   </button>
@@ -110,14 +107,7 @@ export default function Profile() {
                   <span className="text-2xl font-bold text-instagram-text">12</span>
                   <span className="text-instagram-textSecondary text-sm">bài viết</span>
                 </div>
-                <div className="flex flex-col items-center">
-                  <span className="text-2xl font-bold text-instagram-text">158</span>
-                  <span className="text-instagram-textSecondary text-sm">người theo dõi</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <span className="text-2xl font-bold text-instagram-text">120</span>
-                  <span className="text-instagram-textSecondary text-sm">đang theo dõi</span>
-                </div>
+               
               </div>
 
               {/* Bio / Edit Form */}
@@ -128,7 +118,7 @@ export default function Profile() {
                       {user?.name || "User Name"}
                     </p>
                     <p className="text-instagram-textSecondary text-sm">
-                      📱 Creating amazing content | {user?.email}
+                      Creating amazing content | {user?.email}
                     </p>
                   </>
                 ) : (
@@ -151,7 +141,7 @@ export default function Profile() {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <button type="submit" className="px-4 py-2 bg-instagram-primary text-white rounded">Save</button>
+                      <button type="submit" className="btn-primary  px-4 py-2 border rounded">Save</button>
                       <button type="button" onClick={handleEditToggle} className="px-4 py-2 border rounded">Cancel</button>
                     </div>
                   </form>
@@ -168,12 +158,6 @@ export default function Profile() {
           <div className="flex justify-center gap-8">
             <button className="py-3 px-4 text-instagram-text font-semibold border-b-2 border-instagram-text transition-all hover:opacity-75">
               📸 Bài viết
-            </button>
-            <button className="py-3 px-4 text-instagram-textSecondary font-semibold hover:text-instagram-text transition-all">
-              ❤️ Yêu thích
-            </button>
-            <button className="py-3 px-4 text-instagram-textSecondary font-semibold hover:text-instagram-text transition-all">
-              🏷️ Được gắn thẻ
             </button>
           </div>
         </div>

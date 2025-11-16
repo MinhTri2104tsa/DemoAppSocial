@@ -32,8 +32,6 @@ export default function Sidebar({ onOpenCreate }) {
 
   const navItems = [
     { icon: Home, label: "Trang chủ", path: "/" },
-    { icon: Search, label: "Khám phá", path: "/explore" },
-    { icon: Heart, label: "Thích", path: "/likes" },
     { icon: User, label: "Hồ sơ", path: "/profile" },
   ];
 
@@ -42,7 +40,7 @@ export default function Sidebar({ onOpenCreate }) {
       {/* Logo */}
       <div className="p-6 border-b border-instagram-divider">
         <h1 className="text-3xl font-bold text-instagram-text">
-          📱 AppSocial
+          Postly
         </h1>
       </div>
 
@@ -76,7 +74,7 @@ export default function Sidebar({ onOpenCreate }) {
         {/* Create Button */}
         <button
           onClick={onOpenCreate}
-          className="flex items-center gap-4 px-4 py-3 rounded-lg bg-instagram-primary text-white font-semibold hover:bg-blue-600 transition-all mt-4"
+          className="w-full btn-primary flex items-center gap-4 px-4 py-3 rounded-lg bg-instagram-primary text-white font-semibold hover:bg-blue-600 transition-all mt-4"
         >
           <PlusSquare size={24} />
           <span className="text-lg">Tạo bài mới</span>

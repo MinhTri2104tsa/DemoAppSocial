@@ -63,7 +63,7 @@ function PostForm({ onPostCreated }) {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 max-w-2xl mx-auto">
-      <h3 className="text-xl font-bold mb-4 text-instagram-text">📝 Đăng bài mới</h3>
+      <h3 className="text-xl font-bold mb-4 text-instagram-text">Đăng bài mới</h3>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <textarea
           placeholder="Bạn đang nghĩ gì?"
@@ -97,7 +97,7 @@ function PostForm({ onPostCreated }) {
         <button
           type="submit"
           disabled={loading}
-          className="px-6 py-2 bg-instagram-primary text-white font-semibold rounded-lg hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
+          className="w-full btn-primary mt-2 px-6 py-2 bg-instagram-primary text-white font-semibold rounded-lg hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
         >
           {loading ? "Đang đăng..." : "Đăng bài"}
         </button>

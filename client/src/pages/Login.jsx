@@ -31,7 +31,7 @@ function Login() {
     <div className="min-h-screen flex items-center justify-center bg-instagram-light">
       <div className="w-full max-w-sm bg-white border border-instagram-border rounded-lg shadow-sm p-8">
         <h2 className="text-2xl font-bold text-center mb-6 text-instagram-text">
-          📱 AppSocial
+           Postly
         </h2>
         <h3 className="text-center text-instagram-textSecondary mb-6">
           Đăng nhập để tiếp tục
@@ -58,7 +58,7 @@ function Login() {
           />
           <button
             type="submit"
-            className="w-full py-2 bg-instagram-primary text-white font-semibold rounded-lg hover:bg-blue-600 transition-all mt-2"
+            className="w-full btn-primary mt-2"
           >
             Đăng nhập
           </button>

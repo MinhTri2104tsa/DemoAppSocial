@@ -61,7 +61,7 @@ function Register() {
           />
           <button
             type="submit"
-            className="w-full py-2 bg-instagram-primary text-white font-semibold rounded-lg hover:bg-blue-600 transition-all mt-2"
+            className="w-full btn-primary mt-2"
           >
             Đăng ký
           </button>
