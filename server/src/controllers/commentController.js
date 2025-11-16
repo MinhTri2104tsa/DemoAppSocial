@@ -1,4 +1,4 @@
-const {CommentModel} = require('../models/commentModel.js');
+const CommentModel = require('../models/commentModel.js');
 const {getIo} = require('../socket.js');
 
 

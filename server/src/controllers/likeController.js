@@ -1,4 +1,4 @@
-const {LikeModel} = require('../models/likeModel.js');
+const LikeModel = require('../models/likeModel.js');
 const jwt = require('jsonwebtoken');
 const {getIo} = require('../socket.js');
 

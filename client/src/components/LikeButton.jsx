@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import likeApi from "../api/likeApi";
 import socket from "../socketClient";
 
-export default function LikeButton({ postId }) {
+export default function LikeButton({ postId, onToggle }) {
   const [liked, setLiked] = useState(false);
   const [count, setCount] = useState(0);
 
@@ -44,6 +44,8 @@ export default function LikeButton({ postId }) {
       const data = res.data || res;
       setCount(Number(data.totalLikes || 0));
       setLiked(!!data.likedByUser);
+      // notify parent (optional) so it can refresh other parts of UI
+      if (typeof onToggle === 'function') onToggle(data);
       // server will also broadcast to others; no need to emit from client
     } catch (err) {
       console.error("Like toggle failed", err);
