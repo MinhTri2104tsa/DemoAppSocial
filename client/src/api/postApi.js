@@ -1,4 +1,4 @@
-const axiosClient = require("./axiosClient");
+import axiosClient from "./axiosClient";
 
 const postApi = {
   getPosts: () => axiosClient.get("/posts"),
@@ -12,4 +12,4 @@ const postApi = {
   deletePost: (id) => axiosClient.delete(`/posts/${id}`),
 };
 
-module.exports = postApi;
+export default postApi;

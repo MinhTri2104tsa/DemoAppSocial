@@ -1,4 +1,4 @@
-const axios = rewuire("axios");
+import axios from "axios";
 
 const axiosClient = axios.create({
   baseURL: "http://localhost:4000/api",
@@ -19,4 +19,4 @@ axiosClient.interceptors.request.use((config) => {
   return config;
 });
 
-module.exports = axiosClient;
+export default axiosClient;
