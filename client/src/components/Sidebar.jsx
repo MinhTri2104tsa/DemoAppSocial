@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { getUser, removeToken, removeUser } from "../utils/auth";
-import { Home, Search, PlusSquare, Heart, User, LogOut } from "lucide-react";
+import { Home, PlusSquare, User, LogOut } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export default function Sidebar({ onOpenCreate }) {
@@ -27,6 +27,8 @@ export default function Sidebar({ onOpenCreate }) {
   const handleLogout = () => {
     removeToken();
     removeUser();
+     // Emit event so App.js re-checks auth state
+    window.dispatchEvent(new Event('authStateChanged'));
     navigate("/login");
   };
 

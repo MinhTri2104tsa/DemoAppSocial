@@ -1,18 +1,14 @@
 import { useState, useContext } from "react";
 import authApi from "../api/authApi";
-import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { setToken, setUser } from "../utils/auth";
 
 function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
-  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -21,7 +17,9 @@ function Login() {
       setUser(res.data.user);
       //   login(res.data.user, res.data.token);
       setMessage(" Đăng nhập thành công!");
-      navigate("/");
+      // Emit event so App.js re-checks auth state
+      window.dispatchEvent(new Event('authStateChanged'));
+      setTimeout(() => navigate("/"), 100);
     } catch (err) {
       setMessage("Sai tài khoản hoặc mật khẩu!");
     }

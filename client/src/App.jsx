@@ -7,13 +7,28 @@ import Profile from "./pages/Profile";
 import Modal from "./components/Modal";
 import PostForm from "./components/PostForm";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { isAuthenticated } from "./utils/auth";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-
+  const [authenticated, setAuthenticated] = useState(isAuthenticated());
+  useEffect(() => {
+    // Listen to storage events (login/logout from other tabs or same tab)
+    const onStorageChange = () => {
+      setAuthenticated(isAuthenticated());
+    };
+    window.addEventListener('storage', onStorageChange);
+    
+    // Listen to custom auth events (login/logout in this app)
+    window.addEventListener('authStateChanged', onStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', onStorageChange);
+      window.removeEventListener('authStateChanged', onStorageChange);
+    };
+  }, []);
   const handlePostCreated = () => {
     setIsModalOpen(false);
     setRefreshTrigger(prev => prev + 1);
@@ -21,9 +36,9 @@ function App() {
 
   return (
     <BrowserRouter>
-      {isAuthenticated() && <Sidebar onOpenCreate={() => setIsModalOpen(true)} />}
+      {authenticated && <Sidebar onOpenCreate={() => setIsModalOpen(true)} />}
       
-      <div className={isAuthenticated() ? "ml-64" : ""}>
+      <div className={authenticated ? "ml-64" : ""}>
         <Navbar />
         <Routes>
           <Route path="/" element={<Home key={refreshTrigger} />} />
@@ -33,7 +48,7 @@ function App() {
         </Routes>
       </div>
 
-      {isAuthenticated() && (
+      {authenticated && (
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
           <PostForm onPostCreated={handlePostCreated} />
         </Modal>
