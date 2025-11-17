@@ -1,6 +1,6 @@
 const db = require('../config/db.js');
 const {getIo} = require('../socket.js');
-const { getAllPosts, createPost, updatePost , deletePost} = require('../models/postModel.js');
+const { getAllPosts,getPostsByUser, createPost, updatePost , deletePost} = require('../models/postModel.js');
 
 
 // Get all posts controller
@@ -189,10 +189,38 @@ const removePost = (req, res) => {
     });
   });
 };
+const getUserPosts = (req, res) => {
+    const userId = req.params.userId;
+    
+    if (!userId) {
+      return res.status(400).json({ error: "User ID required" });
+    }
 
+    getPostsByUser(userId, (err, result) => {
+        if(err) return res.status(500).json({ error: err.message });
+        
+        // Combine image_url and video_url into a single media array for frontend
+        const posts = result.map(post => {
+          let media = [];
+          try {
+            const imgs = post.image_url ? JSON.parse(post.image_url) : [];
+            const vids = post.video_url ? JSON.parse(post.video_url) : [];
+            if (Array.isArray(imgs)) media.push(...imgs.map(u => ({ type: 'image', url: u })));
+            if (Array.isArray(vids)) media.push(...vids.map(u => ({ type: 'video', url: u })));
+          } catch (e) {
+            // fallback when stored as string
+            if (post.image_url) media.push({ type: 'image', url: post.image_url });
+            else if (post.video_url) media.push({ type: 'video', url: post.video_url });
+          }
+          return { ...post, media };
+        });
+        res.json(posts);
+    });
+};
 module.exports = {
     getPosts,
     addPost,
     editPost,
-    removePost
+    removePost,
+    getUserPosts
 };

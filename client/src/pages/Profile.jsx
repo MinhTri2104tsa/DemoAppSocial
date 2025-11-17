@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
 import userApi from '../api/userApi';
+import postApi from '../api/postApi';
+import PostCard from '../components/PostCard';
+import Modal from '../components/Modal';
+import { X } from 'lucide-react';
 
 export default function Profile() {
   const stored = JSON.parse(localStorage.getItem("user"));
@@ -8,11 +12,30 @@ export default function Profile() {
   const [form, setForm] = useState({ username: user?.username || '', email: user?.email || '' });
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
+  const [userPosts, setUserPosts] = useState([]);
+  const [loadingPosts, setLoadingPosts] = useState(true);
+  const [activeTab, setActiveTab] = useState('posts'); // 'posts', 'favorites', 'tagged'
+  const [selectedPost, setSelectedPost] = useState(null); 
 
   useEffect(() => {
     setForm({ username: user?.username || '', email: user?.email || '' });
   }, [user]);
 
+  // Fetch user's posts
+  useEffect(() => {
+    if (user?.id) {
+      setLoadingPosts(true);
+      postApi.getUserPosts(user.id)
+        .then(res => {
+          setUserPosts(res.data || []);
+        })
+        .catch(err => {
+          console.error('Error fetching user posts:', err);
+          setUserPosts([]);
+        })
+        .finally(() => setLoadingPosts(false));
+    }
+  }, [user?.id]);
   const getFullAvatarUrl = (avatarPath) => {
     if (!avatarPath) return '/avatar.jpg';
     if (avatarPath.startsWith('http')) return avatarPath;
@@ -60,7 +83,18 @@ export default function Profile() {
       alert(err?.response?.data?.message || 'Lỗi khi cập nhật hồ sơ');
     }
   }
-
+  const handlePostUpdate = () => {
+    // Refresh posts after edit/delete
+    if (user?.id) {
+      postApi.getUserPosts(user.id)
+        .then(res => {
+          setUserPosts(res.data || []);
+        })
+        .catch(err => {
+          console.error('Error refreshing user posts:', err);
+        });
+    }
+  }
   return (
     <div className="min-h-screen bg-instagram-light">
       {/* Profile Header */}
@@ -104,7 +138,7 @@ export default function Profile() {
               {/* Stats */}
               <div className="flex gap-8 mb-6">
                 <div className="flex flex-col items-center">
-                  <span className="text-2xl font-bold text-instagram-text">12</span>
+                  <span className="text-2xl font-bold text-instagram-text">{userPosts.length}</span>
                   <span className="text-instagram-textSecondary text-sm">bài viết</span>
                 </div>
                
@@ -156,7 +190,14 @@ export default function Profile() {
       <div className="bg-white border-b border-instagram-border sticky top-12 z-20">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex justify-center gap-8">
-            <button className="py-3 px-4 text-instagram-text font-semibold border-b-2 border-instagram-text transition-all hover:opacity-75">
+            <button 
+              onClick={() => setActiveTab('posts')}
+              className={`py-3 px-4 font-semibold border-b-2 transition-all ${
+                activeTab === 'posts' 
+                  ? 'text-instagram-text border-instagram-text' 
+                  : 'text-instagram-textSecondary border-transparent hover:text-instagram-text'
+              }`}
+            >
               📸 Bài viết
             </button>
           </div>
@@ -164,27 +205,96 @@ export default function Profile() {
       </div>
 
       {/* Posts Grid */}
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-3 gap-4">
-          {[...Array(12)].map((_, i) => (
-            <div
-              key={i}
-              className="aspect-square bg-gradient-to-br from-instagram-divider to-instagram-border rounded-lg hover:opacity-80 transition-all cursor-pointer overflow-hidden shadow-sm"
-            >
-              <div className="w-full h-full flex items-center justify-center text-4xl">
-                📷
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        {activeTab === 'posts' && (
+          <>
+            {loadingPosts ? (
+              <div className="text-center py-12">
+                <p className="text-instagram-textSecondary">Đang tải bài viết...</p>
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
+            ) : userPosts.length > 0 ? (
+              <div className="grid grid-cols-3 gap-4">
+                {userPosts.map(post => (
+                  <div 
+                    key={post.id}
+                    onClick={() => setSelectedPost(post)}
+                    className="aspect-square bg-instagram-border rounded-lg hover:opacity-80 transition-all cursor-pointer overflow-hidden shadow-sm relative group"
+                  >
+                    {/* Display first media if available */}
+                    {post.media && post.media.length > 0 ? (
+                      <>
+                        {post.media[0].type === 'image' ? (
+                          <img 
+                            src={`http://localhost:4000/${post.media[0].url}`}
+                            alt="post"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <video 
+                            src={`http://localhost:4000/${post.media[0].url}`}
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                      </>
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-instagram-divider to-instagram-border">
+                        <span className="text-4xl">📝</span>
+                      </div>
+                    )}
+                    
+                    {/* Hover overlay with stats */}
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all flex items-center justify-center gap-6 opacity-0 group-hover:opacity-100">
+                      <div className="text-white text-center">
+                        <div className="text-2xl font-bold">❤️ {post.likes || 0}</div>
+                        <div className="text-sm">Thích</div>
+                      </div>
+                      <div className="text-white text-center">
+                        <div className="text-2xl font-bold">💬 {post.comments || 0}</div>
+                        <div className="text-sm">Bình luận</div>
+                      </div>
+                    </div>
 
-      {/* Empty State */}
-      <div className="text-center py-12">
-        <p className="text-instagram-textSecondary">
-          Chưa có bài viết nào
-        </p>
+                    {/* Multi-media badge */}
+                    {post.media && post.media.length > 1 && (
+                      <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded text-xs font-semibold text-instagram-text">
+                        +{post.media.length - 1}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-instagram-textSecondary">
+                  Chưa có bài viết nào
+                </p>
+              </div>
+            )}
+          </>
+        )}
       </div>
+      {/* Post Detail Modal */}
+      <Modal isOpen={!!selectedPost} onClose={() => setSelectedPost(null)}>
+        {selectedPost && (
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-instagram-border flex items-center justify-between px-4 py-3 z-10">
+              <h3 className="text-lg font-bold text-instagram-text">Chi tiết bài viết</h3>
+              <button
+                onClick={() => setSelectedPost(null)}
+                className="p-1 hover:bg-instagram-divider rounded transition-all"
+              >
+                {/* <X size={20} className="text-instagram-text" /> */}
+              </button>
+            </div>
+            <div className="p-4">
+              <PostCard post={selectedPost} onUpdate={() => {
+                handlePostUpdate();
+                setSelectedPost(null);
+              }} />
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

@@ -14,6 +14,23 @@ const getAllPosts = (callback) => {
     `;
     db.query(query, callback);
 }
+// Get posts by specific user with aggregated likes and comments counts
+const getPostsByUser = (userId, callback) => {
+    // Return posts for a specific user with aggregated likes and comments counts
+    const query = `
+      SELECT p.*, 
+        u.username,
+        u.avatar AS avatar,
+        COALESCE((SELECT COUNT(*) FROM comments c WHERE c.post_id = p.id), 0) AS comments,
+        COALESCE((SELECT COUNT(*) FROM likes l WHERE l.post_id = p.id), 0) AS likes
+      FROM posts p
+      LEFT JOIN users u ON p.user_id = u.id
+      WHERE p.user_id = ?
+      ORDER BY p.created_at DESC
+    `;
+    db.query(query, [userId], callback);
+}
+
 // Create post function with default user_id handling
 const createPost = (post, callback) => {
   const { user_id, title, content, image_url, video_url } = post;
@@ -85,5 +102,6 @@ module.exports = {
     getAllPosts,
     createPost,
     updatePost,
-    deletePost
+    deletePost,
+    getPostsByUser
 };
