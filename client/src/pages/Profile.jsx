@@ -3,7 +3,6 @@ import userApi from '../api/userApi';
 import postApi from '../api/postApi';
 import PostCard from '../components/PostCard';
 import Modal from '../components/Modal';
-import { X } from 'lucide-react';
 
 export default function Profile() {
   const stored = JSON.parse(localStorage.getItem("user"));

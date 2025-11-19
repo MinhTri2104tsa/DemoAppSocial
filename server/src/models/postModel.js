@@ -38,14 +38,8 @@ const createPost = (post, callback) => {
   // Default to user_id 1 if not provided
   const finalUserId = user_id || 1;
   
-  console.log("Received post object:", post);
-  console.log("Final user_id to use:", finalUserId);
-  
   const query = "INSERT INTO posts (user_id, title, content, image_url, video_url) VALUES (?, ?, ?, ?, ?)";
   const values = [finalUserId, title, content, image_url, video_url];
-  
-  console.log("SQL Query:", query);
-  console.log("SQL Values:", values);
   
   db.query(query, values, (err, result) => {
     callback(err, result);
@@ -55,9 +49,6 @@ const createPost = (post, callback) => {
 const updatePost = (id, post, callback) => {
   const { title, content, image_url, video_url } = post;
   
-  console.log("Post ID:", id);
-  console.log("Update data:", { title, content, image_url, video_url });
-
   let updateFields = [];
   let values = [];
 

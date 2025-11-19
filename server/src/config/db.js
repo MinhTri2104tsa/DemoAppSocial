@@ -13,14 +13,11 @@ function handleDisconnect() {
   });
     db.connect((err) => {
     if (err) {
-      console.log("Error connecting to database:", err);
       setTimeout(handleDisconnect, 2000);
     } else {
-      console.log("Connected to database", process.env.DB_NAME);
     }
     });
     db.on("error", (err) => {
-    console.log("Database error", err);
     if (err.code === "PROTOCOL_CONNECTION_LOST") {
         handleDisconnect();
     } else {

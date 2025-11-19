@@ -50,7 +50,7 @@ const loginUser = (req, res) => {
     // Create JWT with id (for MySQL - auto-increment primary key)
     const token = jwt.sign(
         { id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "24h",
     });
     res.status(200).json({
       message: "Login successful",

@@ -40,10 +40,8 @@ setIo(io);
 
 // Khi có kết nối socket từ client
 io.on("connection", (socket) => {
-  console.log("Socket connected:", socket.id);
 
   socket.on("disconnect", () => {
-    console.log("Socket disconnected:", socket.id);
   });
 });
 
