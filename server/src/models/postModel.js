@@ -1,7 +1,17 @@
 const db = require('../config/db.js');
 
+// Promisify db.query
+const queryPromise = (query, params = []) => {
+    return new Promise((resolve, reject) => {
+        db.query(query, params, (error, results) => {
+            if (error) reject(error);
+            else resolve(results);
+        });
+    });
+};
+
 // Get all posts with user info, comments count, and likes count
-const getAllPosts = (callback) => {
+const getAllPosts = async () => {
     const query = `
       SELECT p.*, 
         u.username,
@@ -12,11 +22,11 @@ const getAllPosts = (callback) => {
       LEFT JOIN users u ON p.user_id = u.id
       ORDER BY p.created_at DESC
     `;
-    db.query(query, callback);
-}
+    return await queryPromise(query);
+};
+
 // Get posts by specific user with aggregated likes and comments counts
-const getPostsByUser = (userId, callback) => {
-    // Return posts for a specific user with aggregated likes and comments counts
+const getPostsByUser = async (userId) => {
     const query = `
       SELECT p.*, 
         u.username,
@@ -28,29 +38,23 @@ const getPostsByUser = (userId, callback) => {
       WHERE p.user_id = ?
       ORDER BY p.created_at DESC
     `;
-    db.query(query, [userId], callback);
-}
+    return await queryPromise(query, [userId]);
+};
 
 // Create post function with default user_id handling
-const createPost = (post, callback) => {
+const createPost = async (post) => {
   const { user_id, title, content, image_url, video_url } = post;
-  
-  // Default to user_id 1 if not provided
   const finalUserId = user_id || 1;
-  
   const query = "INSERT INTO posts (user_id, title, content, image_url, video_url) VALUES (?, ?, ?, ?, ?)";
   const values = [finalUserId, title, content, image_url, video_url];
-  
-  db.query(query, values, (err, result) => {
-    callback(err, result);
-  });
+  return await queryPromise(query, values);
 };
+
 // Update post function with conditional media update
-const updatePost = (id, post, callback) => {
+const updatePost = async (id, post) => {
   const { title, content, image_url, video_url } = post;
-  
-  let updateFields = [];
-  let values = [];
+  const updateFields = [];
+  const values = [];
 
   if (content !== undefined) {
     updateFields.push("content = ?");
@@ -60,33 +64,28 @@ const updatePost = (id, post, callback) => {
     updateFields.push("title = ?");
     values.push(title);
   }
-  // Only update image if a new one was provided
   if (image_url !== undefined && image_url !== null) {
     updateFields.push("image_url = ?");
     values.push(image_url);
   }
-  // Only update video if a new one was provided
   if (video_url !== undefined && video_url !== null) {
     updateFields.push("video_url = ?");
     values.push(video_url);
   }
 
-  // Add the post ID at the end
   values.push(id);
 
   if (updateFields.length === 0) {
-    console.warn("No fields to update");
-    return callback(new Error("No fields to update"), null);
+    throw new Error("No fields to update");
   }
 
   const query = `UPDATE posts SET ${updateFields.join(", ")} WHERE id = ?`;
-  db.query(query, values, (err, result) => {
-    callback(err, result);
-  });
+  return await queryPromise(query, values);
 };
+
 // Delete post function
-const deletePost = (id, callback) => {
-  db.query("DELETE FROM posts WHERE id=?", [id], callback);
+const deletePost = async (id) => {
+  return await queryPromise("DELETE FROM posts WHERE id=?", [id]);
 };
 
 module.exports = {
@@ -94,5 +93,6 @@ module.exports = {
     createPost,
     updatePost,
     deletePost,
-    getPostsByUser
+    getPostsByUser,
+    queryPromise
 };

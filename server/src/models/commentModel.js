@@ -1,28 +1,40 @@
 const db = require('../config/db.js');
 
+// Promisify db.query
+const queryPromise = (query, params = []) => {
+    return new Promise((resolve, reject) => {
+        db.query(query, params, (error, results) => {
+            if (error) reject(error);
+            else resolve(results);
+        });
+    });
+};
+
 const CommentModel = {
-    getCommentsByPostId: (postId, callback) => {
-        // join with users to get username and include parent_comment_id for threading
+    getCommentsByPostId: async (postId) => {
         const query = `SELECT c.id, c.post_id, c.user_id, c.content, c.parent_comment_id, c.created_at, u.username
                        FROM comments c
                        JOIN users u ON c.user_id = u.id
                        WHERE c.post_id = ?
                        ORDER BY c.created_at ASC`;
-        db.query(query, [postId], callback);
+        return await queryPromise(query, [postId]);
     },
-    createComment: (data, callback) => {
+
+    createComment: async (data) => {
         const query = "INSERT INTO comments (post_id, user_id, content, parent_comment_id) VALUES (?, ?, ?, ?)";
         const parent = data.parent_comment_id || data.parentId || null;
-        db.query(query, [data.postId, data.userId, data.content, parent], callback);
+        return await queryPromise(query, [data.postId, data.userId, data.content, parent]);
     },
-    updateComment: (id, userId, content, callback) => {
-        // only allow author to update
+
+    updateComment: async (id, userId, content) => {
         const query = "UPDATE comments SET content = ? WHERE id = ? AND user_id = ?";
-        db.query(query, [content, id, userId], callback);
+        return await queryPromise(query, [content, id, userId]);
     },
-    deleteComment: (id, userId, callback) => {
+
+    deleteComment: async (id, userId) => {
         const query = "DELETE FROM comments WHERE id = ? AND user_id = ?";
-        db.query(query, [id, userId], callback);
+        return await queryPromise(query, [id, userId]);
     }
 };
+
 module.exports = CommentModel;

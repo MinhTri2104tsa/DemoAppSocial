@@ -1,35 +1,60 @@
 const db = require('../config/db.js');
 
-const createUser = async (user, callback) => {
-    const query = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
-    db.query(query, [user.username, user.email, user.password], callback);
+// Promisify db.query
+const queryPromise = (query, params = []) => {
+    return new Promise((resolve, reject) => {
+        db.query(query, params, (error, results) => {
+            if (error) reject(error);
+            else resolve(results);
+        });
+    });
 };
-const findUserByEmail = (email, callback) => {
+
+const createUser = async (user) => {
+    const query = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
+    return await queryPromise(query, [user.username, user.email, user.password]);
+};
+
+const findUserByEmail = async (email) => {
     const query = 'SELECT * FROM users WHERE email = ?';
-    db.query(query, [email], callback);
-}
-const findUserById = (id, callback) => {
+    return await queryPromise(query, [email]);
+};
+
+const findUserById = async (id) => {
     const query = 'SELECT * FROM users WHERE id = ?';
-    db.query(query, [id], callback);
-}
- const updateUserById = (id, data, callback) => {
+    return await queryPromise(query, [id]);
+};
+
+const updateUserById = async (id, data) => {
     const fields = [];
     const values = [];
-    if (data.username !== undefined) { fields.push('username = ?'); values.push(data.username); }
-    if (data.email !== undefined) { fields.push('email = ?'); values.push(data.email); }
-    if (data.avatar !== undefined) { fields.push('avatar = ?'); values.push(data.avatar); }
+    
+    if (data.username !== undefined) { 
+        fields.push('username = ?'); 
+        values.push(data.username); 
+    }
+    if (data.email !== undefined) { 
+        fields.push('email = ?'); 
+        values.push(data.email); 
+    }
+    if (data.avatar !== undefined) { 
+        fields.push('avatar = ?'); 
+        values.push(data.avatar); 
+    }
 
     if (fields.length === 0) {
-        return callback(null, { affectedRows: 0 });
+        return { affectedRows: 0 };
     }
 
     const query = `UPDATE users SET ${fields.join(', ')} WHERE id = ?`;
     values.push(id);
-    db.query(query, values, callback);
-}
+    return await queryPromise(query, values);
+};
+
 module.exports = {
     createUser,
     findUserByEmail,
     findUserById,
-    updateUserById
+    updateUserById,
+    queryPromise
 };
