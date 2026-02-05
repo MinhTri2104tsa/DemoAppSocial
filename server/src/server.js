@@ -10,6 +10,7 @@ const { Server } = require("socket.io");
 const cors = require('cors');
 const dotenv = require('dotenv');
 require("./config/db.js");
+require("./config/initDb.js");
 const { setIo } = require('./socket.js');
 dotenv.config();
 
