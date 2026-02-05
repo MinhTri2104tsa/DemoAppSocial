@@ -22,7 +22,7 @@ function Navbar() {
     <nav className="flex justify-between items-center px-6 py-3 bg-white border-b border-instagram-border shadow-sm sticky top-0 z-40">
       <div>
         <Link to="/" className="text-2xl font-bold text-instagram-text">
-          📱 AppSocial
+          Postly
         </Link>
       </div>
 

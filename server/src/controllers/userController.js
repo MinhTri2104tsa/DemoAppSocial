@@ -13,10 +13,22 @@ const registerUser = async (req, res) => {
             return res.status(400).json({message: "All fields are required"});
         }
 
+        // Email syntax validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({message: "Email không hợp lệ"});
+        }
+
+        // Password strength validation: ít nhất 8 ký tự, có hoa, có thường, có ký tự đặc biệt
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/;
+        if (!passwordRegex.test(password)) {
+            return res.status(400).json({message: "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường và ký tự đặc biệt"});
+        }
+
         // Check if user already exists
         const existingUser = await findUserByEmail(email);
         if (existingUser.length > 0) {
-            return res.status(400).json({message: "User already exists"});
+            return res.status(400).json({message: "Email đã được sử dụng"});
         }
 
         // Hash password and create user
@@ -27,6 +39,23 @@ const registerUser = async (req, res) => {
         res.status(201).json({message: "User registered successfully"});
     } catch (err) {
         res.status(500).json({error: err.message});
+    }
+};
+
+// Check email availability (syntax + existence)
+const checkEmailAvailability = async (req, res) => {
+    try {
+        const email = req.query.email;
+        if (!email) return res.status(400).json({ message: 'Email is required' });
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) return res.status(400).json({ message: 'Email không hợp lệ' });
+
+        const existingUser = await findUserByEmail(email);
+        const exists = existingUser.length > 0;
+        res.json({ exists });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 };
 
@@ -124,5 +153,6 @@ module.exports = {
     registerUser,
     loginUser,
     getProfile,
-    updateProfile
+    updateProfile,
+    checkEmailAvailability
 };
