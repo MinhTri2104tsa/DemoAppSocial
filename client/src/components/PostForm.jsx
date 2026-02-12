@@ -62,28 +62,30 @@ function PostForm({ onPostCreated }) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 max-w-2xl mx-auto">
-      <h3 className="text-xl font-bold mb-4 text-instagram-text">Đăng bài mới</h3>
+    <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6 max-w-2xl mx-auto mb-6 transition-all hover:shadow-lg">
+      <h3 className="text-xl font-bold mb-4 text-gray-900">Đăng bài mới</h3>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <textarea
           placeholder="Bạn đang nghĩ gì?"
           value={text}
           onChange={(e) => setText(e.target.value)}
-          className="w-full h-24 p-3 border border-instagram-border rounded-lg outline-none resize-none focus:border-instagram-primary focus:ring-1 focus:ring-instagram-primary transition-all"
+          className="w-full h-24 p-4 border border-gray-200 rounded-lg outline-none resize-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all bg-gray-50 text-gray-900 placeholder-gray-500"
         ></textarea>
 
-        <input
-          type="file"
-          accept="image/*,video/*"
-          multiple
-          onChange={handleFileChange}
-          className="px-3 py-2 border border-instagram-border rounded-lg cursor-pointer"
-        />
+        <div className="relative">
+          <input
+            type="file"
+            accept="image/*,video/*"
+            multiple
+            onChange={handleFileChange}
+            className="px-4 py-3 border border-gray-200 rounded-lg cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all"
+          />
+        </div>
 
         {previews.length > 0 && (
-          <div className="preview grid grid-cols-2 gap-2">
+          <div className="preview grid grid-cols-2 gap-3">
             {previews.map((p, idx) => (
-              <div key={idx} className="rounded-lg overflow-hidden">
+              <div key={idx} className="rounded-lg overflow-hidden shadow-sm border border-gray-200">
                 {mediaFiles[idx]?.type.startsWith('image/') ? (
                   <img src={p} alt={`preview-${idx}`} className="w-full h-40 object-cover" />
                 ) : (
@@ -97,7 +99,7 @@ function PostForm({ onPostCreated }) {
         <button
           type="submit"
           disabled={loading}
-          className="w-full btn-primary mt-2 px-6 py-2 bg-instagram-primary text-white font-semibold rounded-lg hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
+          className="w-full btn-primary mt-2 px-6 py-3 text-white font-semibold rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
         >
           {loading ? "Đang đăng..." : "Đăng bài"}
         </button>

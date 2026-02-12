@@ -38,16 +38,16 @@ export default function Sidebar({ onOpenCreate }) {
   ];
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-instagram-border overflow-y-auto z-40">
+    <aside className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-200 overflow-y-auto z-40 shadow-sm">
       {/* Logo */}
-      <div className="p-6 border-b border-instagram-divider">
-        <h1 className="text-3xl font-bold text-instagram-text">
+      <div className="p-8 border-b border-gray-100">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">
           Postly
         </h1>
       </div>
 
       {/* Navigation */}
-      <nav className="flex flex-col gap-4 p-6">
+      <nav className="flex flex-col gap-3 p-6">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -56,17 +56,17 @@ export default function Sidebar({ onOpenCreate }) {
               to={item.path}
               onMouseEnter={() => setIsHovered(item.path)}
               onMouseLeave={() => setIsHovered(null)}
-              className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-all group ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all group font-medium ${
                 isHovered === item.path
-                  ? "bg-instagram-light text-instagram-primary"
-                  : "text-instagram-text hover:bg-instagram-light"
+                  ? "bg-blue-50 text-blue-600 shadow-sm"
+                  : "text-gray-700 hover:bg-gray-50"
               }`}
             >
               <Icon
-                size={24}
-                className="group-hover:text-instagram-primary transition-colors"
+                size={22}
+                className="transition-colors"
               />
-              <span className="text-lg font-semibold group-hover:text-instagram-primary transition-colors">
+              <span className="text-base">
                 {item.label}
               </span>
             </Link>
@@ -76,29 +76,29 @@ export default function Sidebar({ onOpenCreate }) {
         {/* Create Button */}
         <button
           onClick={onOpenCreate}
-          className="w-full btn-primary flex items-center gap-4 px-4 py-3 rounded-lg bg-instagram-primary text-white font-semibold hover:bg-blue-600 transition-all mt-4"
+          className="w-full btn-primary flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-white font-semibold mt-6"
         >
-          <PlusSquare size={24} />
-          <span className="text-lg">Tạo bài mới</span>
+          <PlusSquare size={20} />
+          <span>Tạo bài mới</span>
         </button>
       </nav>
 
       {/* User Section */}
-      <div className="absolute bottom-0 left-0 right-0 border-t border-instagram-divider bg-white">
+      <div className="absolute bottom-0 left-0 right-0 border-t border-gray-100 bg-white">
         {user && (
           <div className="p-6">
             {/* User Info */}
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-4 p-3 rounded-lg bg-gray-50">
               <img
                 src={user?.avatar ? `http://localhost:4000/${user.avatar}` : '/default-avatar.png'}
                 alt="avatar"
-                className="w-12 h-12 rounded-full object-cover border-2 border-instagram-border"
+                className="w-12 h-12 rounded-full object-cover border-2 border-blue-200"
               />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-instagram-text truncate">
+                <p className="text-sm font-semibold text-gray-900 truncate">
                   {user?.username || user?.name}
                 </p>
-                <p className="text-xs text-instagram-textSecondary truncate">
+                <p className="text-xs text-gray-500 truncate">
                   {user?.email}
                 </p>
               </div>
@@ -107,7 +107,7 @@ export default function Sidebar({ onOpenCreate }) {
             {/* Logout Button */}
             <button
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-50 text-red-500 rounded-lg font-semibold hover:bg-red-100 transition-all"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition-all shadow-sm"
             >
               <LogOut size={18} />
               <span>Đăng xuất</span>

@@ -40,12 +40,14 @@ function App() {
       
       <div className={authenticated ? "ml-64" : ""}>
         <Navbar />
-        <Routes>
-          <Route path="/" element={<Home key={refreshTrigger} />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/profile" element={<Profile />} />
-        </Routes>
+        <main className="bg-gray-50 min-h-screen">
+          <Routes>
+            <Route path="/" element={<Home key={refreshTrigger} />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/profile" element={<Profile />} />
+          </Routes>
+        </main>
       </div>
 
       {authenticated && (

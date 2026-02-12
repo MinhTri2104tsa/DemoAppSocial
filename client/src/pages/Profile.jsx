@@ -95,28 +95,28 @@ export default function Profile() {
     }
   }
   return (
-    <div className="min-h-screen bg-instagram-light">
+    <div className="min-h-screen bg-gray-50">
       {/* Profile Header */}
-      <div className="bg-white border-b border-instagram-border">
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <div className="flex gap-8 items-start mb-8">
+      <div className="bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-5xl mx-auto px-4 py-12">
+          <div className="flex gap-12 items-start">
             {/* Avatar */}
-            <div className="relative">
+            <div className="relative flex-shrink-0">
               <img
                 src={getFullAvatarUrl(user?.avatar)}
                 alt="profile"
-                className="w-32 h-32 rounded-full object-cover border-2 border-instagram-border"
+                className="w-40 h-40 rounded-full object-cover border-4 border-blue-100 shadow-lg"
               />
               {isEditing && (
-                <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-1">
+                <div className="absolute -bottom-2 -right-2 bg-blue-500 rounded-full p-3 shadow-lg cursor-pointer hover:bg-blue-600 transition-all">
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleAvatarChange}
-                    className="w-8 h-8 opacity-0 absolute inset-0 cursor-pointer"
+                    className="w-6 h-6 opacity-0 absolute inset-0 cursor-pointer"
                     title="Change avatar"
                   />
-                  <div className="w-8 h-8 flex items-center justify-center text-sm">✏️</div>
+                  <div className="w-6 h-6 flex items-center justify-center text-white text-lg">✏️</div>
                 </div>
               )}
             </div>
@@ -124,58 +124,80 @@ export default function Profile() {
             {/* User Info */}
             <div className="flex-1">
               <div className="flex items-center gap-4 mb-6">
-                <h1 className="text-3xl font-bold text-instagram-text">
+                <h1 className="text-4xl font-bold text-gray-900">
                   {user?.username || "User"}
                 </h1>
-                <div className="flex items-center gap-3">
-                  <button onClick={handleEditToggle} className="px-4 py-2 border rounded-lg font-semibold">
-                    {isEditing ? 'Cancel' : 'Edit Profile'}
-                  </button>
-                </div>
+                <button 
+                  onClick={handleEditToggle} 
+                  className={`px-6 py-2 rounded-lg font-semibold transition-all ${
+                    isEditing 
+                      ? 'btn-secondary' 
+                      : 'btn-primary'
+                  }`}
+                >
+                  {isEditing ? 'Hủy' : 'Chỉnh sửa hồ sơ'}
+                </button>
               </div>
 
               {/* Stats */}
-              <div className="flex gap-8 mb-6">
-                <div className="flex flex-col items-center">
-                  <span className="text-2xl font-bold text-instagram-text">{userPosts.length}</span>
-                  <span className="text-instagram-textSecondary text-sm">bài viết</span>
+              <div className="flex gap-12 mb-8">
+                <div className="flex flex-col">
+                  <span className="text-3xl font-bold text-gray-900">{userPosts.length}</span>
+                  <span className="text-gray-600 text-sm font-medium">bài viết</span>
                 </div>
-               
               </div>
 
               {/* Bio / Edit Form */}
               <div>
                 {!isEditing ? (
                   <>
-                    <p className="text-instagram-text font-semibold mb-1">
-                      {user?.name || "User Name"}
+                    <p className="text-gray-900 font-semibold text-lg mb-2">
+                      {user?.name || user?.username || "User Name"}
                     </p>
-                    <p className="text-instagram-textSecondary text-sm">
-                      Creating amazing content | {user?.email}
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      {user?.email}
                     </p>
                   </>
                 ) : (
-                  <form onSubmit={handleSave} className="space-y-3">
+                  <form onSubmit={handleSave} className="space-y-4 bg-gray-50 p-6 rounded-xl border border-gray-200">
                     <div>
-                      <label className="block text-sm font-medium">Username</label>
-                      <input name="username" value={form.username} onChange={handleInput} className="mt-1 block w-full border rounded px-3 py-2" />
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">Tên người dùng</label>
+                      <input 
+                        name="username" 
+                        value={form.username} 
+                        onChange={handleInput} 
+                        className="w-full border border-gray-200 rounded-lg px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white"
+                      />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium">Email</label>
-                      <input name="email" value={form.email} onChange={handleInput} className="mt-1 block w-full border rounded px-3 py-2" />
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">Email</label>
+                      <input 
+                        name="email" 
+                        value={form.email} 
+                        onChange={handleInput} 
+                        className="w-full border border-gray-200 rounded-lg px-4 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all bg-white"
+                      />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium">Avatar</label>
-                      <div className="flex items-center gap-3 mt-2">
-                        <div className="w-16 h-16 rounded-full overflow-hidden border">
+                      <label className="block text-sm font-semibold text-gray-900 mb-3">Ảnh đại diện</label>
+                      <div className="flex items-center gap-4">
+                        <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-blue-100 shadow-md flex-shrink-0">
                           <img src={avatarPreview || getFullAvatarUrl(user?.avatar)} alt="preview" className="w-full h-full object-cover" />
                         </div>
-                        <input type="file" accept="image/*" onChange={handleAvatarChange} />
+                        <label className="flex-1 px-4 py-2 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 transition-all text-gray-600 font-medium text-center">
+                          Chọn ảnh
+                          <input 
+                            type="file" 
+                            accept="image/*" 
+                            onChange={handleAvatarChange}
+                            className="hidden"
+                          />
+                        </label>
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      <button type="submit" className="btn-primary  px-4 py-2 border rounded">Save</button>
-                      <button type="button" onClick={handleEditToggle} className="px-4 py-2 border rounded">Cancel</button>
+                    <div className="flex gap-3 pt-4">
+                      <button type="submit" className="btn-primary px-6 py-2">Lưu</button>
+                      <button type="button" onClick={handleEditToggle} className="btn-secondary px-6 py-2">Hủy</button>
                     </div>
                   </form>
                 )}
@@ -186,15 +208,15 @@ export default function Profile() {
       </div>
 
       {/* Tabs */}
-      <div className="bg-white border-b border-instagram-border sticky top-12 z-20">
-        <div className="max-w-4xl mx-auto px-4">
+      <div className="bg-white border-b border-gray-200 sticky top-16 z-20 shadow-sm">
+        <div className="max-w-5xl mx-auto px-4">
           <div className="flex justify-center gap-8">
             <button 
               onClick={() => setActiveTab('posts')}
-              className={`py-3 px-4 font-semibold border-b-2 transition-all ${
+              className={`py-4 px-4 font-semibold border-b-2 transition-all text-sm ${
                 activeTab === 'posts' 
-                  ? 'text-instagram-text border-instagram-text' 
-                  : 'text-instagram-textSecondary border-transparent hover:text-instagram-text'
+                  ? 'text-blue-600 border-blue-600' 
+                  : 'text-gray-600 border-transparent hover:text-gray-900'
               }`}
             >
               📸 Bài viết
@@ -204,20 +226,20 @@ export default function Profile() {
       </div>
 
       {/* Posts Grid */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 py-12">
         {activeTab === 'posts' && (
           <>
             {loadingPosts ? (
-              <div className="text-center py-12">
-                <p className="text-instagram-textSecondary">Đang tải bài viết...</p>
+              <div className="text-center py-16">
+                <p className="text-gray-600 font-medium">Đang tải bài viết...</p>
               </div>
             ) : userPosts.length > 0 ? (
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-6">
                 {userPosts.map(post => (
                   <div 
                     key={post.id}
                     onClick={() => setSelectedPost(post)}
-                    className="aspect-square bg-instagram-border rounded-lg hover:opacity-80 transition-all cursor-pointer overflow-hidden shadow-sm relative group"
+                    className="aspect-square bg-gray-100 rounded-xl hover:shadow-lg transition-all cursor-pointer overflow-hidden shadow-md relative group border border-gray-200"
                   >
                     {/* Display first media if available */}
                     {post.media && post.media.length > 0 ? (
@@ -226,36 +248,34 @@ export default function Profile() {
                           <img 
                             src={`http://localhost:4000/${post.media[0].url}`}
                             alt="post"
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         ) : (
                           <video 
                             src={`http://localhost:4000/${post.media[0].url}`}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         )}
                       </>
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-instagram-divider to-instagram-border">
-                        <span className="text-4xl">📝</span>
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-cyan-100">
+                        <span className="text-5xl">📝</span>
                       </div>
                     )}
                     
                     {/* Hover overlay with stats */}
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all flex items-center justify-center gap-6 opacity-0 group-hover:opacity-100">
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 flex items-center justify-center gap-8 opacity-0 group-hover:opacity-100">
                       <div className="text-white text-center">
-                        <div className="text-2xl font-bold">❤️ {post.likes || 0}</div>
-                        <div className="text-sm">Thích</div>
+                        <div className="text-3xl font-bold">❤️ {post.likes || 0}</div>
                       </div>
                       <div className="text-white text-center">
-                        <div className="text-2xl font-bold">💬 {post.comments || 0}</div>
-                        <div className="text-sm">Bình luận</div>
+                        <div className="text-3xl font-bold">💬 {post.comments || 0}</div>
                       </div>
                     </div>
 
                     {/* Multi-media badge */}
                     {post.media && post.media.length > 1 && (
-                      <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded text-xs font-semibold text-instagram-text">
+                      <div className="absolute top-3 right-3 bg-white px-2 py-1 rounded-lg text-xs font-bold text-gray-900 shadow-lg">
                         +{post.media.length - 1}
                       </div>
                     )}
@@ -263,8 +283,9 @@ export default function Profile() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <p className="text-instagram-textSecondary">
+              <div className="text-center py-16">
+                <div className="text-5xl mb-4">📸</div>
+                <p className="text-gray-600 font-medium">
                   Chưa có bài viết nào
                 </p>
               </div>

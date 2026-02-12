@@ -5,32 +5,34 @@ import { getUser } from "../utils/auth";
 
 function CommentItem({ c, replies, onReplyClick, onEditClick, onDeleteClick, isAuthor }) {
   return (
-    <div className="py-1">
-      <div className="flex items-center gap-2">
-        <b className="font-semibold text-sm">{c.username}</b>
-        <span className="text-xs text-instagram-textSecondary">{new Date(c.created_at).toLocaleString('vi-VN')}</span>
+    <div className="py-2 border-l-2 border-blue-100 pl-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <b className="font-semibold text-sm text-gray-900">{c.username}</b>
+          <span className="text-xs text-gray-500 ml-2">{new Date(c.created_at).toLocaleString('vi-VN')}</span>
+        </div>
       </div>
-      <div className="text-sm text-instagram-textSecondary mt-1">{c.content}</div>
-      <div className="flex gap-3 mt-1 text-xs text-instagram-textSecondary">
-        <button onClick={() => onReplyClick(c.id, c.username)} className="hover:underline">Trả lời</button>
+      <div className="text-sm text-gray-700 mt-1">{c.content}</div>
+      <div className="flex gap-3 mt-2 text-xs">
+        <button onClick={() => onReplyClick(c.id, c.username)} className="text-blue-600 hover:text-blue-700 font-medium hover:underline">Trả lời</button>
         {isAuthor && (
           <>
-            <button onClick={() => onEditClick(c.id, c.content)} className="hover:underline">Chỉnh sửa</button>
-            <button onClick={() => onDeleteClick(c.id)} className="hover:underline text-red-500">Xóa</button>
+            <button onClick={() => onEditClick(c.id, c.content)} className="text-blue-600 hover:text-blue-700 font-medium hover:underline">Chỉnh sửa</button>
+            <button onClick={() => onDeleteClick(c.id)} className="text-red-500 hover:text-red-700 font-medium hover:underline">Xóa</button>
           </>
         )}
       </div>
 
       {/* replies */}
       {replies?.length > 0 && (
-        <div className="mt-2 ml-6 border-l border-instagram-divider pl-3 space-y-2">
+        <div className="mt-3 ml-4 space-y-2 pt-2 border-t border-gray-100">
           {replies.map(r => (
             <div key={r.id} className="text-sm">
               {r.parentUsername && (
-                <div className="text-xs text-instagram-textSecondary">Trả lời {r.parentUsername}</div>
+                <div className="text-xs text-gray-500 mb-1">Trả lời <span className="font-semibold">@{r.parentUsername}</span></div>
               )}
-              <b className="font-semibold text-sm">{r.username}</b>
-              <div className="text-instagram-textSecondary">{r.content}</div>
+              <b className="font-semibold text-sm text-gray-900">{r.username}</b>
+              <div className="text-gray-700 text-sm">{r.content}</div>
             </div>
           ))}
         </div>
@@ -134,8 +136,8 @@ export default function CommentSection({ postId }) {
   });
 
   return (
-    <div className="mt-3">
-      <div className="space-y-3 mb-3 max-h-64 overflow-y-auto">
+    <div className="mt-4">
+      <div className="space-y-3 mb-4 max-h-64 overflow-y-auto pr-2">
         {topComments.map((c) => (
           <div key={c.id} className="">
             <CommentItem
@@ -149,23 +151,52 @@ export default function CommentSection({ postId }) {
 
             {/* Reply input under the comment if active */}
             {replyTo?.id === c.id && (
-              <div className="ml-6 mt-2">
-                <div className="text-xs text-instagram-textSecondary mb-1">Đang trả lời @{replyTo?.username}</div>
-                <input value={replyText} onChange={(e) => setReplyText(e.target.value)} placeholder={`Trả lời @${replyTo?.username}`} className="w-full border border-instagram-border rounded-lg px-3 py-2 text-sm focus:outline-none" />
+              <div className="ml-6 mt-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <div className="text-xs text-blue-700 font-medium mb-2">Đang trả lời @{replyTo?.username}</div>
+                <input 
+                  value={replyText} 
+                  onChange={(e) => setReplyText(e.target.value)} 
+                  placeholder={`Trả lời @${replyTo?.username}`} 
+                  className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white" 
+                />
                 <div className="flex gap-2 mt-2">
-                  <button onClick={() => handleReplySubmit()} className="px-3 py-1 bg-instagram-primary text-white rounded">Gửi</button>
-                  <button onClick={() => setReplyTo(null)} className="px-3 py-1 bg-gray-200 rounded">Hủy</button>
+                  <button 
+                    onClick={() => handleReplySubmit()} 
+                    className="px-4 py-1 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-all text-sm"
+                  >
+                    Gửi
+                  </button>
+                  <button 
+                    onClick={() => setReplyTo(null)} 
+                    className="px-4 py-1 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-all text-sm"
+                  >
+                    Hủy
+                  </button>
                 </div>
               </div>
             )}
 
             {/* Inline edit UI */}
             {editingId === c.id && (
-              <div className="mt-2">
-                <textarea value={editingText} onChange={(e) => setEditingText(e.target.value)} className="w-full border border-instagram-border rounded p-2" />
+              <div className="mt-2 ml-4 p-3 bg-yellow-50 rounded-lg border border-yellow-100">
+                <textarea 
+                  value={editingText} 
+                  onChange={(e) => setEditingText(e.target.value)} 
+                  className="w-full border border-yellow-200 rounded-lg p-2 text-sm focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-100" 
+                />
                 <div className="flex gap-2 mt-2">
-                  <button onClick={() => handleEditSubmit(c.id)} className="px-3 py-1 bg-instagram-primary text-white rounded">Lưu</button>
-                  <button onClick={() => { setEditingId(null); setEditingText(''); }} className="px-3 py-1 bg-gray-200 rounded">Hủy</button>
+                  <button 
+                    onClick={() => handleEditSubmit(c.id)} 
+                    className="px-4 py-1 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-all text-sm"
+                  >
+                    Lưu
+                  </button>
+                  <button 
+                    onClick={() => { setEditingId(null); setEditingText(''); }} 
+                    className="px-4 py-1 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-all text-sm"
+                  >
+                    Hủy
+                  </button>
                 </div>
               </div>
             )}
@@ -173,14 +204,14 @@ export default function CommentSection({ postId }) {
         ))}
       </div>
 
-      <form onSubmit={handleSubmit} className="flex gap-2 mt-2 pt-2 border-t border-instagram-divider">
+      <form onSubmit={handleSubmit} className="flex gap-2 mt-4 pt-3 border-t border-gray-200">
         <input
-          className="border border-instagram-border rounded-lg px-3 py-2 flex-1 text-sm focus:border-instagram-primary focus:outline-none"
+          className="border border-gray-200 rounded-lg px-4 py-2 flex-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none transition-all bg-gray-50 placeholder-gray-500"
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Viết bình luận..."
         />
-        <button className="text-instagram-primary font-semibold hover:text-blue-600 transition-all">
+        <button className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition-all text-sm">
           Gửi
         </button>
       </form>

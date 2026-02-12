@@ -54,11 +54,16 @@ export default function LikeButton({ postId, onToggle }) {
   };
 
   return (
-    <div className="flex items-center gap-1">
-      <button onClick={toggleLike} className="text-xl" aria-pressed={liked}>
+    <div className="flex items-center gap-2">
+      <button 
+        onClick={toggleLike} 
+        className="text-2xl hover:scale-110 transition-transform"
+        aria-pressed={liked}
+        title={liked ? "Bỏ thích" : "Thích"}
+      >
         {liked ? "❤️" : "🤍"}
       </button>
-      <span className="text-sm">{Number.isFinite(count) ? count : 0}</span>
+      <span className="text-sm font-medium text-gray-700">{Number.isFinite(count) ? count : 0}</span>
     </div>
   );
 }

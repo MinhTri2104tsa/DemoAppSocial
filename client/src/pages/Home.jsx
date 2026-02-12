@@ -36,13 +36,17 @@ function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-instagram-light">
+    <div className="min-h-screen bg-gray-50">
       {/* Posts Feed */}
       <div className="max-w-2xl mx-auto py-8 px-4">
         {posts.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-instagram-textSecondary text-lg">
-              Chưa có bài viết nào. Hãy tạo bài đầu tiên! 📝
+          <div className="text-center py-16">
+            <div className="text-6xl mb-4">📝</div>
+            <p className="text-gray-600 text-lg font-medium">
+              Chưa có bài viết nào
+            </p>
+            <p className="text-gray-500 text-sm mt-2">
+              Hãy tạo bài đầu tiên của bạn!
             </p>
           </div>
         ) : (
