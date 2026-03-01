@@ -2,6 +2,8 @@
 import { useState } from "react";
 import postApi from "../api/postApi";
 
+import toast from 'react-hot-toast';
+
 function PostForm({ onPostCreated }) {
   const [text, setText] = useState("");
   const [mediaFiles, setMediaFiles] = useState([]);
@@ -18,7 +20,7 @@ function PostForm({ onPostCreated }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!text && mediaFiles.length === 0) {
-      alert("Vui lòng nhập nội dung hoặc chọn ảnh/video!");
+      toast.error("Vui lòng nhập nội dung hoặc chọn ảnh/video!");
       return;
     }
 
@@ -46,7 +48,7 @@ function PostForm({ onPostCreated }) {
       setLoading(true);
       const res = await postApi.createPost(formData);
       const successMsg = res?.data?.message || "Đăng bài thành công!";
-      alert(successMsg);
+      toast.success(successMsg);
     setText("");
     setMediaFiles([]);
     setPreviews([]);
@@ -55,7 +57,7 @@ function PostForm({ onPostCreated }) {
       console.error("Post create error:", err);
       console.error("Error response:", err?.response?.data);
       const serverMsg = err?.response?.data?.message || err?.message || "Lỗi khi đăng bài!";
-      alert(serverMsg);
+      toast.error(serverMsg);
     } finally {
       setLoading(false);
     }

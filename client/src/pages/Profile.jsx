@@ -4,6 +4,9 @@ import postApi from '../api/postApi';
 import PostCard from '../components/PostCard';
 import Modal from '../components/Modal';
 
+// toast notifications
+import toast from 'react-hot-toast';
+
 export default function Profile() {
   const stored = JSON.parse(localStorage.getItem("user"));
   const [user, setUser] = useState(stored || null);
@@ -77,9 +80,10 @@ export default function Profile() {
         console.log('dispatch userUpdated failed', e);
       }
       setIsEditing(false);
+      toast.success('Cập nhật hồ sơ thành công');
     } catch (err) {
       console.error('Update profile error', err);
-      alert(err?.response?.data?.message || 'Lỗi khi cập nhật hồ sơ');
+      toast.error(err?.response?.data?.message || 'Lỗi khi cập nhật hồ sơ');
     }
   }
   const handlePostUpdate = () => {

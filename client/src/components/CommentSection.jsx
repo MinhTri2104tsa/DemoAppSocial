@@ -3,6 +3,9 @@ import commentApi from "../api/commentApi";
 import socket from "../socketClient";
 import { getUser } from "../utils/auth";
 
+import toast from 'react-hot-toast';
+import Modal from './Modal';
+
 function CommentItem({ c, replies, onReplyClick, onEditClick, onDeleteClick, isAuthor }) {
   return (
     <div className="py-2 border-l-2 border-blue-100 pl-3">
@@ -48,6 +51,7 @@ export default function CommentSection({ postId }) {
   const [replyText, setReplyText] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState("");
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const currentUser = getUser();
 
   useEffect(() => {
@@ -85,7 +89,7 @@ export default function CommentSection({ postId }) {
       await loadComments();
     } catch (err) {
       console.error('Failed to add comment', err);
-      if (err?.response?.status === 401) alert('Bạn cần đăng nhập để bình luận.');
+      if (err?.response?.status === 401) toast.error('Bạn cần đăng nhập để bình luận.');
     }
   };
 
@@ -113,13 +117,21 @@ export default function CommentSection({ postId }) {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Bạn chắc chắn muốn xóa bình luận này?')) return;
+  const handleDelete = (id) => {
+    // show modal
+    setDeleteConfirmId(id);
+  };
+
+  const confirmDelete = async () => {
+    const id = deleteConfirmId;
+    setDeleteConfirmId(null);
     try {
       await commentApi.deleteComment(id, { postId });
+      toast.success('Xóa bình luận thành công');
       await loadComments();
     } catch (err) {
       console.error('Failed to delete comment', err);
+      toast.error('Lỗi khi xóa bình luận');
     }
   };
 
@@ -136,7 +148,21 @@ export default function CommentSection({ postId }) {
   });
 
   return (
-    <div className="mt-4">
+    <>
+      <Modal isOpen={deleteConfirmId !== null} onClose={() => setDeleteConfirmId(null)}>
+        <p className="text-gray-800">Bạn chắc chắn muốn xóa bình luận này?</p>
+        <div className="mt-6 flex justify-end gap-3">
+          <button
+            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+            onClick={() => setDeleteConfirmId(null)}
+          >Hủy</button>
+          <button
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            onClick={confirmDelete}
+          >Xóa</button>
+        </div>
+      </Modal>
+      <div className="mt-4">
       <div className="space-y-3 mb-4 max-h-64 overflow-y-auto pr-2">
         {topComments.map((c) => (
           <div key={c.id} className="">
@@ -216,5 +242,7 @@ export default function CommentSection({ postId }) {
         </button>
       </form>
     </div>
+    </>
+
   );
 }

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import likeApi from "../api/likeApi";
 import socket from "../socketClient";
 
+import toast from 'react-hot-toast';
+
 export default function LikeButton({ postId, onToggle }) {
   const [liked, setLiked] = useState(false);
   const [count, setCount] = useState(0);
@@ -49,7 +51,7 @@ export default function LikeButton({ postId, onToggle }) {
       // server will also broadcast to others; no need to emit from client
     } catch (err) {
       console.error("Like toggle failed", err);
-      if (err?.response?.status === 401) alert("Bạn cần đăng nhập để thích bài viết.");
+      if (err?.response?.status === 401) toast.error("Bạn cần đăng nhập để thích bài viết.");
     }
   };
 

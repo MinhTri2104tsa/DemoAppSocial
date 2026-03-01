@@ -3,6 +3,9 @@ import { getUser, removeToken, removeUser } from "../utils/auth";
 import { Home, PlusSquare, User, LogOut } from "lucide-react";
 import { useState, useEffect } from "react";
 
+// toast notifications
+import toast from 'react-hot-toast';
+
 export default function Sidebar({ onOpenCreate }) {
   const [user, setUser] = useState(getUser());
   useEffect(() => {
@@ -27,6 +30,7 @@ export default function Sidebar({ onOpenCreate }) {
     removeToken();
     removeUser();
     window.dispatchEvent(new Event('authStateChanged'));
+    toast.success('Đã đăng xuất');
     navigate("/login");
   };
 

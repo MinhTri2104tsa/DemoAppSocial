@@ -6,6 +6,9 @@ import { MoreVertical, Edit2, Trash2, X } from 'lucide-react';
 import { getUser } from '../utils/auth';
 import postApi from '../api/postApi';
 
+import toast from 'react-hot-toast';
+import Modal from './Modal';
+
 function PostCard({ post, onUpdate }) {
   const [showMenu, setShowMenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -15,6 +18,7 @@ function PostCard({ post, onUpdate }) {
   const [previewImages, setPreviewImages] = useState([]);
   const [previewVideos, setPreviewVideos] = useState([]);
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const currentUser = getUser();
   
   // Check if current user is the post author (coerce to number)
@@ -23,19 +27,23 @@ function PostCard({ post, onUpdate }) {
   // post.media is expected to be an array of {type, url}
   const mediaArray = Array.isArray(post?.media) ? post.media : (post?.media ? [post.media] : []);
 
-  const handleDelete = async () => {
-    if (window.confirm('Bạn chắc chắn muốn xóa bài viết này?')) {
-      try {
-        await postApi.deletePost(post.id);
-        alert('Xóa bài viết thành công!');
-        if (onUpdate) onUpdate();
-      } catch (err) {
-        const server = err?.response?.data;
-        console.error('Delete error:', err, server);
-        const msg = server?.error || server?.message || JSON.stringify(server) || err.message;
-        alert('Lỗi khi xóa bài viết: ' + msg);
-      }
-      setShowMenu(false);
+  const handleDelete = () => {
+    // open confirmation modal instead of native dialog
+    setShowDeleteConfirm(true);
+    setShowMenu(false);
+  };
+
+  const confirmDelete = async () => {
+    setShowDeleteConfirm(false);
+    try {
+      await postApi.deletePost(post.id);
+      toast.success('Xóa bài viết thành công!');
+      if (onUpdate) onUpdate();
+    } catch (err) {
+      const server = err?.response?.data;
+      console.error('Delete error:', err, server);
+      const msg = server?.error || server?.message || JSON.stringify(server) || err.message;
+      toast.error('Lỗi khi xóa bài viết: ' + msg);
     }
   };
 
@@ -55,7 +63,7 @@ function PostCard({ post, onUpdate }) {
 
   const handleSaveEdit = async () => {
     if (!editContent.trim()) {
-      alert('Nội dung không được để trống!');
+      toast.error('Nội dung không được để trống!');
       return;
     }
 
@@ -66,7 +74,7 @@ function PostCard({ post, onUpdate }) {
       editVideos.forEach(f => formData.append('videos', f));
 
       await postApi.updatePost(post.id, formData);
-      alert('Cập nhật bài viết thành công!');
+      toast.success('Cập nhật bài viết thành công!');
       setIsEditing(false);
   setEditImages([]);
   setEditVideos([]);
@@ -77,7 +85,7 @@ function PostCard({ post, onUpdate }) {
       const server = err?.response?.data;
       console.error('Update error:', err, server);
       const msg = server?.error || server?.message || JSON.stringify(server) || err.message;
-      alert('Lỗi khi cập nhật bài viết: ' + msg);
+      toast.error('Lỗi khi cập nhật bài viết: ' + msg);
     }
   };
 
@@ -186,7 +194,21 @@ function PostCard({ post, onUpdate }) {
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl shadow-md mb-6 w-full max-w-2xl transition-all hover:shadow-lg hover:border-gray-300">
+    <>
+      <Modal isOpen={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)}>
+        <p className="text-gray-800">Bạn chắc chắn muốn xóa bài viết này?</p>
+        <div className="mt-6 flex justify-end gap-3">
+          <button
+            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+            onClick={() => setShowDeleteConfirm(false)}
+          >Hủy</button>
+          <button
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            onClick={confirmDelete}
+          >Xóa</button>
+        </div>
+      </Modal>
+      <div className="bg-white border border-gray-200 rounded-xl shadow-md mb-6 w-full max-w-2xl transition-all hover:shadow-lg hover:border-gray-300">
       {/* Post Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-100">
         <div className="flex items-center gap-3">
@@ -277,6 +299,7 @@ function PostCard({ post, onUpdate }) {
         <CommentSection postId={post.id} />
       </div>
     </div>
+    </>
   );
 }
 
