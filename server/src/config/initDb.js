@@ -1,4 +1,4 @@
-const db = require('./db');
+const mysql = require('mysql2');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -46,7 +46,33 @@ const queries = [
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`
 ];
 
-const queryPromise = (query) => {
+// Ensure database exists first using a temporary connection without selecting a database
+const ensureDatabase = () => {
+  return new Promise((resolve, reject) => {
+    const tmp = mysql.createConnection({
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASS,
+      multipleStatements: true,
+    });
+
+    tmp.connect((err) => {
+      if (err) {
+        tmp.end();
+        return reject(err);
+      }
+      const dbName = process.env.DB_NAME;
+      const createDbQuery = `CREATE DATABASE IF NOT EXISTS \`${dbName}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`;
+      tmp.query(createDbQuery, (err) => {
+        tmp.end();
+        if (err) return reject(err);
+        resolve();
+      });
+    });
+  });
+};
+
+const queryPromise = (db, query) => {
   return new Promise((resolve, reject) => {
     db.query(query, (err, res) => {
       if (err) return reject(err);
@@ -56,24 +82,24 @@ const queryPromise = (query) => {
 };
 
 const init = async () => {
-  console.log('Khởi tạo bảng nếu chưa tồn tại...');
+  console.log('Khởi tạo database và bảng nếu chưa tồn tại...');
   try {
+    await ensureDatabase();
+    // require the main db connection (which uses DB_NAME)
+    const db = require('./db');
     for (const q of queries) {
-      await queryPromise(q);
+      await queryPromise(db, q);
     }
-    console.log('Tất cả bảng đã được tạo hoặc đã tồn tại.');
-    // Don't exit when required by server at runtime; only exit if run as script
+    console.log('Database và tất cả bảng đã được tạo hoặc đã tồn tại.');
     if (require.main === module) process.exit(0);
   } catch (err) {
-    console.error('Lỗi khi tạo bảng:', err);
+    console.error('Lỗi khi tạo database/bảng:', err);
     if (require.main === module) process.exit(1);
   }
 };
 
-// If run directly (e.g., npm run postinstall), execute init and exit.
 if (require.main === module) {
   init();
 } else {
-  // If required by server at startup, run init but don't exit process
   init().catch((e) => console.error(e));
 }

@@ -303,7 +303,6 @@ export default function Profile() {
                 onClick={() => setSelectedPost(null)}
                 className="p-1 hover:bg-instagram-divider rounded transition-all"
               >
-                {/* <X size={20} className="text-instagram-text" /> */}
               </button>
             </div>
             <div className="p-4">

@@ -15,9 +15,7 @@ function Login() {
       const res = await authApi.login(form);
       setToken(res.data.token);
       setUser(res.data.user);
-      //   login(res.data.user, res.data.token);
       setMessage(" Đăng nhập thành công!");
-      // Emit event so App.js re-checks auth state
       window.dispatchEvent(new Event('authStateChanged'));
       setTimeout(() => navigate("/"), 100);
     } catch (err) {

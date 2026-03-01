@@ -39,7 +39,6 @@ function Register() {
   };
 
   const validatePassword = (pwd, confirm) => {
-    // At least 8 chars, uppercase, lowercase, special char
     const pwdRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/;
     const pwdOk = pwdRegex.test(pwd);
     setValidation((prev) => ({ ...prev, passwordValid: pwdOk, passwordsMatch: pwd === confirm }));
@@ -169,9 +168,9 @@ function Register() {
         {message && (
           <div
             className={`mt-4 p-4 rounded-lg text-center text-sm font-semibold border ${
-              message.includes("thành công")
+              String(message).trim().toLowerCase().includes("thành công")
                 ? "bg-green-50 text-green-700 border-green-200"
-                : "bg-red-50 text-red-700 border-red-200"
+                : "bg-green-50 text-green-700 border-green-200"
             }`}
           >
             {message}

@@ -7,7 +7,6 @@ export default function Sidebar({ onOpenCreate }) {
   const [user, setUser] = useState(getUser());
   useEffect(() => {
     const onUserUpdated = (e) => {
-      // event.detail contains updated user from Profile.jsx
       const updated = e?.detail || JSON.parse(localStorage.getItem('user'));
       setUser(updated);
     };
@@ -27,7 +26,6 @@ export default function Sidebar({ onOpenCreate }) {
   const handleLogout = () => {
     removeToken();
     removeUser();
-     // Emit event so App.js re-checks auth state
     window.dispatchEvent(new Event('authStateChanged'));
     navigate("/login");
   };
